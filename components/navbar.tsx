@@ -18,10 +18,20 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isDownloadOpen, setIsDownloadOpen] = useState(false)
 
-  // Throttle scroll handler for performance
+  // 1. SCROLL LOCK EFFECT: Jab menu open ho, background scroll na ho
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isMobileMenuOpen])
+
   useEffect(() => {
     let ticking = false
-    
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
@@ -31,12 +41,10 @@ export function Navbar() {
         ticking = true
       }
     }
-
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement
@@ -44,21 +52,17 @@ export function Navbar() {
         setIsDownloadOpen(false)
       }
     }
-
     if (isDownloadOpen) {
       document.addEventListener('click', handleClickOutside)
     }
-
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [isDownloadOpen])
 
-  // Memoized track function
   const trackDownloadEvent = useCallback((storeName: string, location: string) => {
     if (typeof window !== "undefined") {
       console.log(`Tracking: ${storeName} clicked on ${location}`)
-      
       if ((window as any).gtag) {
         (window as any).gtag('event', 'download_click', {
           store: storeName,
@@ -69,29 +73,30 @@ export function Navbar() {
     }
   }, [])
 
-  // --- UPDATED MENU ITEMS (As per your request) ---
   const menuItems: MenuItem[] = [
-    { id: "hero", label: "Anasayfa" },         // Home
-    { id: "kesfet", label: "Keşfet" },         // Explore
-    { id: "Kamu", label: "Bireysel" },     // Individual
-    { id: "isletmeler", label: "İşletme" },    // Business
-    { id: "kamu-kurumlari", label: "Kamu&STK" }, // Government & NGO
-    { id: "pratik-yasam", label: "Pratik" },         // Practical
+    { id: "hero", label: "Anasayfa" },
+    { id: "kesfet", label: "Keşfet" },
+    { id: "Kamu", label: "Bireysel" },
+    { id: "isletmeler", label: "İşletme" },
+    { id: "kamu-kurumlari", label: "Kamu&STK" },
+    { id: "pratik-yasam", label: "Pratik" },
   ]
 
   const scrollToSection = useCallback((id: string) => {
-    // Special case for "Anasayfa" to scroll to top
+    setIsMobileMenuOpen(false); // Menu pehle band karein
+    
     if (id === "hero") {
        window.scrollTo({ top: 0, behavior: "smooth" });
-       setIsMobileMenuOpen(false);
        return;
     }
 
-    const section = document.getElementById(id)
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" })
-      setIsMobileMenuOpen(false)
-    }
+    // Thoda delay taake menu close animation complete ho jaye
+    setTimeout(() => {
+        const section = document.getElementById(id)
+        if (section) {
+            section.scrollIntoView({ behavior: "smooth" })
+        }
+    }, 300);
   }, [])
 
   const handleAppStoreClick = useCallback(() => {
@@ -108,7 +113,7 @@ export function Navbar() {
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-md ${
-          isScrolled 
+          isScrolled || isMobileMenuOpen // Mobile menu open ho to bhi background black rakhein
             ? "bg-black/90 border-b border-white/10 py-3" 
             : "bg-gradient-to-b from-black/50 to-transparent py-5"
         }`}
@@ -119,9 +124,12 @@ export function Navbar() {
             {/* Logo */}
             <Link 
               href="/" 
-              className="flex items-center gap-3 z-50 group"
+              className="flex items-center gap-3 z-50 group relative"
               aria-label="Bajar Home"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setIsMobileMenuOpen(false);
+              }}
             >
               <div className="relative w-9 h-9 transition-transform group-hover:scale-110">
                 <Image
@@ -138,7 +146,7 @@ export function Navbar() {
               </span>
             </Link>
 
-            {/* Desktop Navigation - Centered "Grill" Style */}
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center justify-center flex-1 mx-8">
               <div className="flex items-center space-x-1 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5">
                 {menuItems.map((item) => (
@@ -150,14 +158,13 @@ export function Navbar() {
                     className="px-4 py-1.5 text-sm font-medium text-gray-300 hover:text-white transition-colors relative group whitespace-nowrap"
                   >
                     {item.label}
-                    {/* Hover Underline Effect */}
                     <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-[#9fcc2e] group-hover:w-3/4 transition-all duration-300 rounded-full" />
                   </motion.button>
                 ))}
               </div>
             </div>
 
-            {/* Desktop Download Button - Green Pill Style */}
+            {/* Desktop Download Button */}
             <div className="hidden md:block relative download-dropdown">
               <motion.button
                 onClick={() => setIsDownloadOpen(!isDownloadOpen)}
@@ -203,7 +210,7 @@ export function Navbar() {
 
             {/* Mobile Menu Toggle */}
             <motion.button 
-              className="md:hidden text-white z-50 p-2 ml-4"
+              className="md:hidden text-white z-[60] p-2 ml-4 relative" 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               whileTap={{ scale: 0.95 }}
               aria-label={isMobileMenuOpen ? "Menüyü kapat" : "Menüyü aç"}
@@ -221,9 +228,10 @@ export function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl md:hidden flex flex-col justify-center px-6"
+            // CHANGE 2: padding-top-24 (taake header ke neeche aye) aur justify-center hataya
+            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl md:hidden flex flex-col pt-24 pb-10 px-6 overflow-y-auto h-screen"
           >
-            <div className="space-y-2 mb-12">
+            <div className="space-y-2 mb-8">
               {menuItems.map((item, index) => (
                 <motion.button
                   key={item.id}
@@ -231,7 +239,7 @@ export function Navbar() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => scrollToSection(item.id)}
-                  className="flex items-center justify-between w-full text-left text-2xl font-bold text-white hover:text-[#9fcc2e] transition-colors py-4 border-b border-white/5 group"
+                  className="flex items-center justify-between w-full text-left text-xl font-bold text-white hover:text-[#9fcc2e] transition-colors py-4 border-b border-white/5 group"
                 >
                   {item.label}
                   <ChevronRight className="text-[#9fcc2e] opacity-0 group-hover:opacity-100" />
@@ -243,11 +251,10 @@ export function Navbar() {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="space-y-4"
+              className="space-y-4 mt-auto" // mt-auto pushes this to bottom if space permits
             >
               <p className="text-gray-400 text-sm mb-4 font-medium uppercase tracking-wider text-center">Uygulamayı İndir</p>
               
-              {/* Mobile App Store Button - Green */}
               <motion.button 
                 whileTap={{ scale: 0.98 }}
                 onClick={handleAppStoreClick} 
@@ -260,7 +267,6 @@ export function Navbar() {
                 </div>
               </motion.button>
               
-              {/* Mobile Google Play Button - Green */}
               <motion.button 
                 whileTap={{ scale: 0.98 }}
                 onClick={handlePlayStoreClick} 
