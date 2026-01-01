@@ -76,7 +76,7 @@ export function Navbar() {
     { id: "bireysel", label: "Bireysel" },     // Individual
     { id: "isletmeler", label: "İşletme" },    // Business
     { id: "kamu-kurumlari", label: "Kamu&STK" }, // Government & NGO
-    { id: "pratik", label: "Pratik" },         // Practical
+    { id: "pratik-yasam", label: "Pratik" },         // Practical
   ]
 
   const scrollToSection = useCallback((id: string) => {
