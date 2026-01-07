@@ -33,17 +33,19 @@ export default function BusinessHeroSection() {
     >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <Image
-          src="/business-man-bg.jpg"
-          alt="Business hero background"
-          fill
-          className="object-cover object-center top-0.5"
-          sizes="100vw"
-          quality={90}
-          priority
-        />
+       <Image
+  src="/business-man-bg.jpg"
+  alt="Business hero background"
+  fill
+  className="object-cover object-center top-0.5"
+  sizes="100vw"
+  quality={90}
+  priority
+  style={{ left: '116px', position: 'absolute' }}
+/>
+
         {/* Optional overlay for better text contrast if needed */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/100 via-black/35 to-transparent" />
       </div>
 
       <div className="relative z-10 w-full max-w-8xl px-6 md:px-12 py-16 flex items-center">

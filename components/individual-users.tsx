@@ -76,9 +76,7 @@ export default function AppHeroSection() {
               <button className="group flex items-center justify-center sm:justify-start gap-3 bg-[#9fcc2e] text-black px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 hover:bg-[#8eb629] shadow-[0_0_20px_rgba(159,204,46,0.3)] hover:shadow-[0_0_30px_rgba(159,204,46,0.5)] w-full sm:w-auto">
                 <FaApple size={28} className="text-white" />
                 <div className="text-left leading-tight">
-                  <div className="text-[11px] uppercase font-bold tracking-wider opacity-80 text-white">
-                    Download on
-                  </div>
+                  
                   <div className="text-sm font-bold text-white">App Store</div>
                 </div>
               </button>
@@ -87,9 +85,7 @@ export default function AppHeroSection() {
               <button className="group flex items-center justify-center sm:justify-start gap-3 bg-[#9fcc2e] text-black px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 hover:bg-[#8eb629] shadow-[0_0_20px_rgba(159,204,46,0.3)] hover:shadow-[0_0_30px_rgba(159,204,46,0.5)] w-full sm:w-auto">
                 <FaGooglePlay size={24} className="text-white" />
                 <div className="text-left leading-tight">
-                  <div className="text-[11px] uppercase font-bold tracking-wider opacity-80 text-white">
-                    Get it on
-                  </div>
+                  
                   <div className="text-sm font-bold text-white">Google Play</div>
                 </div>
               </button>
